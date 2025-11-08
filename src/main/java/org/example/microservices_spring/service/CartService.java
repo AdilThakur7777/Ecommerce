@@ -1,5 +1,6 @@
 package org.example.microservices_spring.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.microservices_spring.dto.CartItemRequest;
 import org.example.microservices_spring.model.CartItem;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
@@ -43,8 +45,7 @@ public class CartService {
             existingCartItem.setQuantity(existingCartItem.getQuantity() + request.getQuantity());
             existingCartItem.setPrice(product.getPrice().multiply(BigDecimal.valueOf(existingCartItem.getQuantity())));
             cartItemRepository.save(existingCartItem);
-        }
-        else{
+        } else {
             //creating new cart item
             CartItem cartItem = new CartItem();
             cartItem.setUser(user);
@@ -55,5 +56,16 @@ public class CartService {
 
         }
         return true;
+    }
+
+    public boolean deleteItemFromCart(String userId, Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
+        if(productOpt.isPresent() && userOpt.isPresent()) {
+            cartItemRepository.deleteByUserAndProduct(userOpt.get(), productOpt.get());
+            return true;
+        }
+
+        return false;
     }
 }
