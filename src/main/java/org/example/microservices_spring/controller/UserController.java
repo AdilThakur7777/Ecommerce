@@ -1,6 +1,9 @@
-package org.example.microservices_spring;
+package org.example.microservices_spring.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.microservices_spring.dto.UserResponse;
+import org.example.microservices_spring.model.User;
+import org.example.microservices_spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +22,17 @@ public class UserController {
     private UserService userService;
 //   @GetMapping("/api/users")
     @RequestMapping(value="", method = RequestMethod.GET)
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>>getAllUsers() {
 
 //        return ResponseEntity.ok(userService.fetchAllUsers());
         return ResponseEntity.status(HttpStatus.OK).body(userService.fetchAllUsers());
     }
+@GetMapping("/{id}")
+public ResponseEntity<UserResponse> getUser(@PathVariable Long id){
+    return userService.fetchUser(id).map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
 
-//
-   @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-//       User user = userService.fetchUser(id);
-//       if(user == null){
-//           return ResponseEntity.notFound().build();
-//       }
-//        return ResponseEntity.ok(user);
-       return userService.fetchUser(id)
-               .map(ResponseEntity::ok)
-               .orElse(ResponseEntity.notFound().build());
-    }
+}
+
 
 
 

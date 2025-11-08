@@ -1,0 +1,6 @@
+
+//Entities are POJO Plain Old Java Object's in JPA
+//each instance is a row in JPA
+// JPA entities are object that represent data in the relational database
+// deafult constructor is needed to create the insatances of entity class during the retervial of data.
+// default constructor is mandatory
